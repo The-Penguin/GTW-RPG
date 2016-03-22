@@ -1,0 +1,37 @@
+<!--
+********************************************************************************
+	Project owner:		RageQuit community
+	Project name: 		GTW-RPG
+	Developers:   		Mr_Moose
+
+	Source code:		https://github.com/GTWCode/GTW-RPG/
+	Bugtracker: 		http://forum.404rq.com/bug-reports/
+	Suggestions:		http://forum.404rq.com/mta-servers-development/
+
+	Version:    		Open source
+	License:    		BSD 2-Clause
+	Status:     		Stable release
+********************************************************************************
+-->
+
+<meta>
+    <info author="GTWGames" name="Rental vehicles and features" type="script" version="179"></info>
+
+    <!-- Data files -->
+    <script src="data.lua" type="shared" protected="true"></script>
+
+    <!-- Spawn features and data -->
+    <script src="spawn/spawner_data.lua" type="shared" protected="true"></script>
+
+    <!-- Train features -->
+    <script src="trains/train_features.lua" type="server"></script>
+
+    <!-- System and features -->
+    <script src="vehicle_server.lua" type="server"></script>
+    <script src="vehicle_client.lua" type="client" protected="true"></script>
+
+    <!-- Misc features -->
+    <script src="misc/misc.lua" type="server"></script>
+    <script src="misc/doors.lua" type="server"></script>
+    <script src="misc/vehicle_features.lua" type="server"></script>
+</meta>

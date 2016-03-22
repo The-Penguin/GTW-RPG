@@ -1,18 +1,63 @@
---[[ 
+--[[
 ********************************************************************************
-	Project owner:		GTWGames												
-	Project name:		GTW-RPG	
-	Developers:			GTWCode
-	
+	Project owner:		RageQuit community
+	Project name: 		GTW-RPG
+	Developers:   		Mr_Moose
+
 	Source code:		https://github.com/GTWCode/GTW-RPG/
-	Bugtracker:			http://forum.albonius.com/bug-reports/
-	Suggestions:		http://forum.albonius.com/mta-servers-development/
-	
-	Version:			Open source
-	License:			GPL v.3 or later
-	Status:				Stable release
+	Bugtracker: 		http://forum.404rq.com/bug-reports/
+	Suggestions:		http://forum.404rq.com/mta-servers-development/
+
+	Version:    		Open source
+	License:    		BSD 2-Clause
+	Status:     		Stable release
 ********************************************************************************
 ]]--
+
+--[[ Fast food trucks ]]--
+fastfood_trucks = {
+	[423] = true,
+	[588] = true
+}
+
+-- Menu choices table
+menu_choices = {
+	["cluckin_bell"] = {
+		["title"] = "Clucki'n Bell menu",
+		["choice_1"]={ "Cluckin' Little Meal", 	"img/CLUHEAL.png"},
+		["choice_2"]={ "Cluckin' Big Meal", 	"img/CLUHIG.png"},
+		["choice_3"]={ "Cluckin' Big Meal", 	"img/CLULOW.png"},
+		["choice_4"]={ "Cluckin' Big Meal", 	"img/CLUMED.png"},
+	},
+	["burger"] = {
+		["title"] = "Burger Shot menu",
+		["choice_1"]={ "Moo kids Meal", 	"img/BURHEAL.png"},
+		["choice_2"]={ "Beef Tower Meal", 	"img/BURHIG.png"},
+		["choice_3"]={ "Meat Stack Meal", 	"img/BURLOW.png"},
+		["choice_4"]={ "Salad Meal", 		"img/BURMED.png"},
+	},
+	["pizza"] = {
+		["title"] = "Well Stacked Pizza Co. menu",
+		["choice_1"]={ "Buster", 		"img/BURHEAL.png"},
+		["choice_2"]={ "Double D-Luxe", 	"img/BURHIG.png"},
+		["choice_3"]={ "Full rack", 		"img/BURLOW.png"},
+		["choice_4"]={ "Salad Meal", 		"img/BURMED.png"},
+	},
+	["icecream"] = {
+		["title"] = "Mr. Whoopee menu",
+		["choice_1"]={ "Whoopee's special",	"img/ICEPLATE.jpg"},
+		["choice_2"]={ "Whoopee's six pack", 	"img/ICESIX.jpg"},
+		["choice_3"]={ "Whoopee's choice", 	"img/ICETREE.jpg"},
+		["choice_4"]={ "Whoopee's all in", 	"img/ICEALL.jpg"},
+	},
+	["hotdogs"] = {
+		["title"] = "Hotdog van menu",
+		["choice_1"]={ "Small hotdog", 		"img/HOTSMALL.jpg"},
+		["choice_2"]={ "Big hotdog", 		"img/HOTBIG.jpg"},
+		["choice_3"]={ "Skinny hotdog", 	"img/HOTMED.jpg"},
+		["choice_4"]={ "Beer", 			"img/BEER.jpg"},
+	},
+}
 
 -- Markers inside to buy fast food
 markers = {
@@ -30,7 +75,7 @@ markers = {
 	[10]={ 373.9, -118.8, 1000.4, 9, 5, "pizza" },
 	[11]={ 373.9, -118.8, 1000.4, 10, 5, "pizza" },
 	[12]={ 373.9, -118.8, 1000.4, 11, 5, "pizza" },
-	
+
 	-- Cluckin' Bell
 	[13]={ 369, -6, 1000.8515625, 2, 9, "cluckin_bell" },
 	[14]={ 369, -6, 1000.8515625, 1, 9, "cluckin_bell" },
@@ -57,13 +102,15 @@ markers = {
 	[33]={ 375.6, -67.5, 1000.5, 3, 10, "burger" },
 	[34]={ 375.6, -67.5, 1000.5, 4, 10, "burger" },
 	[35]={ 375.6, -67.5, 1000.5, 10, 10, "burger" },
-	
+
 	-- Drive thru's at the end
 	[36]={ 1214, -905, 41.922645568848, 0, 0, "burger" },
 	[37]={ 799.91015625, -1629.6396484375, 12.109879493713, 0, 0, "burger" },
 	[38]={ 2376.5595703125, -1906.7158203125, 12.3828125, 0, 0, "cluckin_bell" },
 	[39]={ 2411.6103515625, -1487.3779296875, 22.555204391479, 0, 0, "cluckin_bell" },
-	[40]={ -2352.6015625, -156.41796875, 34.945182800293, 0, 0, "burger" }
+	[40]={ -2352.6015625, -156.41796875, 34.945182800293, 0, 0, "burger" },
+	[41]={ 1168.9736328125, 2085.4736328125, 10.714609146118, 0, 0, "burger" },
+	[42]={ 1856.7373046875, 2082.8876953125, 10.716941833496, 0, 0, "burger" },
 }
 
 -- Blips are client sided: using custom blips resource
@@ -84,7 +131,7 @@ peds = {
 	[10]={ 373.8, -117.27, 1000.4, 9, 5, 180, 155, "Well Stack Pizza Co." },
 	[11]={ 373.8, -117.27, 1000.4, 10, 5, 180, 155, "Well Stack Pizza Co." },
 	[12]={ 373.8, -117.27, 1000.4, 11, 5, 180, 155, "Well Stack Pizza Co." },
-	
+
 	-- Cluckin' Bell
 	[13]={ 369, -4.4, 1001.8, 2, 9, 180, 167, "Cluckin' Bell" },
 	[14]={ 369, -4.4, 1001.8, 1, 9, 180, 167, "Cluckin' Bell" },
@@ -98,7 +145,7 @@ peds = {
 	[22]={ 369, -4.4, 1001.8, 4, 9, 180, 167, "Cluckin' Bell" },
 	[23]={ 369, -4.4, 1001.8, 3, 9, 180, 167, "Cluckin' Bell" },
 	[24]={ 369, -4.4, 1001.8, 0, 9, 180, 167, "Cluckin' Bell" },
-	
+
 	-- Burger shot
 	[25]={ 376, -66, 1000.5, 0, 10, 180, 205, "Burger Shot" },
 	[26]={ 376, -66, 1000.5, 1, 10, 180, 205, "Burger Shot" },
@@ -143,7 +190,7 @@ blips = {
 	[22]={ 2398, -1899, 14, 14 },
 	[23]={ 2420, -1510, 25, 14 },
 	[24]={ 173, 1177, 15, 14 },
-	
+
 	-- Burger shot
 	[25]={ 812, -1616, 14, 10 },
 	[26]={ 1199, -918, 44, 10 },
@@ -160,11 +207,11 @@ blips = {
 
 -- Food prices
 prices = {
-	3,6,7,4
+	6,12,14,8
 }
 -- Food health increase
 health = {
-	6,12,15,14
+	6,12,14,8
 }
 
 -- object arrays

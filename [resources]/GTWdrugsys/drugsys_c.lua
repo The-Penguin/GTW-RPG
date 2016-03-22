@@ -1,20 +1,20 @@
 --[[
 ********************************************************************************
-	Project owner:		GTWGames												
-	Project name:		GTW-RPG	
-	Developers:			GTWCode, Price (Contributor)
-	
+	Project owner:		RageQuit community
+	Project name: 		GTW-RPG
+	Developers:   		Price
+
 	Source code:		https://github.com/GTWCode/GTW-RPG/
-	Bugtracker:			http://forum.albonius.com/bug-reports/
-	Suggestions:		http://forum.albonius.com/mta-servers-development/
-	
-	Version:			Open source
-	License:			GPL v.3 or later
-	Status:				Stable release
+	Bugtracker: 		http://forum.404rq.com/bug-reports/
+	Suggestions:		http://forum.404rq.com/mta-servers-development/
+
+	Version:    		Open source
+	License:    		BSD 2-Clause
+	Status:     		Stable release
 ********************************************************************************
 ]]--
 
-sec = {{{{{{},{},{},{}}}}}} 			
+sec = {{{{{{},{},{},{}}}}}}
 
 local sx, sy = guiGetScreenSize()
 guiSetInputMode("no_binds_when_editing")
@@ -60,6 +60,10 @@ CloseUseDrugPanel = guiCreateButton(170, 250, 90, 40, "Close", false, DrugUseWin
 
 bindKey("F4", "down",
 function()
+	if getPedOccupiedVehicle(localPlayer) and not guiGetVisible(DrugUseWindow) then
+		exports.GTWtopbar:dm("You can not use drugs while in a vehicle!", 255, 0, 0)
+		return
+	end
 	guiSetVisible(DrugUseWindow, not guiGetVisible(DrugUseWindow))
 	showCursor(guiGetVisible(DrugUseWindow))
 	guiSetText(WeedLabel, getElementData(localPlayer, "Weed") or 0)
@@ -70,7 +74,7 @@ function()
 	guiSetText(HeroinLabel, getElementData(localPlayer, "Heroin") or 0)
 end)
 
-DrugBuyWindow = guiCreateWindow(sx/2-(550/2), sy/2-(310/2), 600, 310, "Drug Panel by Price", false)
+DrugBuyWindow = guiCreateWindow(sx/2-(550/2), sy/2-(310/2), 600, 310, "Drugs by Price for GTW-RPG", false)
 guiWindowSetSizable(DrugBuyWindow, false)
 guiSetVisible(DrugBuyWindow, false)
 guiSetAlpha(DrugBuyWindow, 0.98)
@@ -233,7 +237,7 @@ function()
 		local HeroinAmount = tonumber(guiGetText(HeroinBuyEdit))
 		local Cost = tonumber(string.sub(guiGetText(TotalLabel), 2))
 		if Cost > 0 then
-			if drugDealer then 
+			if drugDealer then
 				if getElementData(drugDealer, "DurgsDealer") then
 					MaxWeed = getElementData(drugDealer, "Weed") or 0
 					MaxGod = getElementData(drugDealer, "God") or 0
@@ -265,7 +269,7 @@ function()
 			guiSetText(SteroidsBuyEdit, "0")
 			guiSetText(HeroinBuyEdit, "0")
 		end
-		exports.GTWwanted:setWl(0.25, 0, "You committed the crime of buying drugs")
+		exports.GTWwanted:setWl(0.25, 0, "You committed the crime of buying drugs", true, false)
 	elseif source == CloseBuyDrugPanel then
 		guiSetVisible(DrugBuyWindow, false)
 		showCursor(false)
@@ -336,7 +340,7 @@ function()
 			if (getElementData(localPlayer, "Steroids") or 0) > 0 then
 				setElementData(localPlayer, "Steroids", (getElementData(localPlayer, "Steroids") or 0) - 1)
 				exports.GTWtopbar:dm("You have injected the Steroids drug!", 255, 0, 255)
-				if not isTimer(SteroidsHealthTimer) then 
+				if not isTimer(SteroidsHealthTimer) then
 					SteroidsHealthTimer = setTimer(function() setElementHealth(localPlayer, getElementHealth(localPlayer) + 2) end, 8000, 0)
 				end
 				if not isTimer(SteroidsTimer) then
@@ -365,6 +369,9 @@ function()
 				exports.GTWtopbar:dm("You don't have any Heroin drug!", 255, 0, 0)
 			end
 		end
+
+		-- Become wanted
+		exports.GTWwanted:setWl(0.8, 30, "You committed the crime of using drugs in public", true, false)
 	elseif source == CloseUseDrugPanel then
 		guiSetVisible(DrugUseWindow, false)
 		showCursor(false)
@@ -372,8 +379,8 @@ function()
 end)
 
 function hardToDie()
-	local rnd = math.random(1, 3)
-	if rnd == 3 then
+	local rnd = math.random(1, 5)
+	if rnd == 5 then
 		cancelEvent()
 	end
 end
@@ -425,7 +432,32 @@ function drawCircle(x, y, z, radius, color)
         sx, sy, sz = ex, ey
     end
 end
- 
+
+--[[ Disable unfair drugs when entering a vehicle ]]--
+addEventHandler("onClientVehicleEnter", getRootElement(),
+function(thePlayer, seat)
+	if thePlayer == localPlayer then
+            	if isTimer(WeedTimer) then
+			killTimer(WeedTimer)
+			setGravity(0.008)
+		end
+		if isTimer(GodTimer) then
+			killTimer(GodTimer)
+			triggerServerEvent("takeDrug", localPlayer, "God", 0)
+		end
+		if isTimer(SpeedTimer) then
+			killTimer(SpeedTimer)
+			setGameSpeed(1)
+		end
+		if isTimer(SteroidsHealthTimer) then
+			killTimer(SteroidsHealthTimer)
+		end
+		if isTimer(HeroinTimer) then
+			killTimer(HeroinTimer)
+		end
+        end
+end)
+
 addEventHandler("onClientRender", root,
 function()
 	local drugTimeTable = {}

@@ -1,16 +1,16 @@
---[[ 
+--[[
 ********************************************************************************
-	Project owner:		GTWGames												
-	Project name:		GTW-RPG	
-	Developers:			GTWCode
-	
+	Project owner:		RageQuit community
+	Project name: 		GTW-RPG
+	Developers:   		Mr_Moose
+
 	Source code:		https://github.com/GTWCode/GTW-RPG/
-	Bugtracker:			http://forum.albonius.com/bug-reports/
-	Suggestions:		http://forum.albonius.com/mta-servers-development/
-	
-	Version:			Open source
-	License:			GPL v.3 or later
-	Status:				Stable release
+	Bugtracker: 		http://forum.404rq.com/bug-reports/
+	Suggestions:		http://forum.404rq.com/mta-servers-development/
+
+	Version:    		Open source
+	License:    		BSD 2-Clause
+	Status:     		Stable release
 ********************************************************************************
 ]]--
 
@@ -26,11 +26,13 @@ stealthTeams 	= {
 --[[ Rules for who can view the blips ]]--
 function validateVisiblity(plr, spectator)
 	-- Player is either cop or criminal and may be hidden?
-	if plr and spectator and getPlayerTeam(plr) and getPlayerTeam(spectator) and 
+	if plr and spectator and getPlayerTeam(plr) and getPlayerTeam(spectator) and
 		stealthTeams[getTeamName(getPlayerTeam(plr))] and stealthTeams[getTeamName(getPlayerTeam(spectator))] then
-		local is_admin = exports.GTWstaff:isAdmin(spectator)
-		-- Admins sees all players
-		if is_admin then return true end
+		-- Memembers of the team staff sees all blips
+		--local c_acc = getPlayerAccount(spectator)
+		if getPlayerTeam(spectator) == getTeamFromName("Staff") --[[or
+			isObjectInACLGroup("user."..getAccountName(c_acc),
+			aclGetGroup("Admin"))]] then return true end
 		-- They are in different teams and should not see each others
 		if getPlayerTeam(plr) ~= getPlayerTeam(spectator) then return false end
 		-- They are in the same team and should see each others
@@ -45,18 +47,25 @@ function refreshAllBlips(resource)
   	for x, plr in pairs(getElementsByType("player")) do
   		-- Remove current blips if any
   		cleanPlayerBlips(plr)
-  		
+
   		-- Get team color or black
 		local r,g,b = 0,0,0
 		if getPlayerTeam(plr) then
 			r,g,b = getTeamColor(getPlayerTeam(plr))
 			playersTeam[plr] = getTeamName(getPlayerTeam(plr))
 		end
-		
+
 		-- Make the blip visible to a specific amount of players
 		for y, spectator in pairs(getElementsByType("player")) do
 			if validateVisiblity(plr, spectator) and not getElementData(plr,"anon") then
 				createBlipAttachedTo(plr, 0, 2, r, g, b, 255, 99, 99999.0, spectator)
+			elseif not getElementData(plr, "anon") then
+				local alpha = 200
+				local plr_team = getPlayerTeam(plr) or ""
+				if getElementData(plr, "Occupation") == "Prisoner" or
+					(plr_team == getTeamFromName("Government") and
+					getElementData(spectator, "Occupation") == "Prisoner") then alpha = 10 end
+				createBlipAttachedTo(plr, 0, 1, 200, 200, 200, alpha, 99, 180, spectator)
 			end
 		end
 		colorUpdater[plr] = setTimer(updateBlipColor, 500, 0, plr)
@@ -70,18 +79,26 @@ end
 function updatePlayerBlip(plr)
 	-- Remove current blips if any
   	cleanPlayerBlips(plr)
-  		
+
   	-- Get team color or black
 	local r,g,b = 0,0,0
 	if getPlayerTeam(plr) then
 		r,g,b = getTeamColor(getPlayerTeam(plr))
 		playersTeam[plr] = getTeamName(getPlayerTeam(plr))
+		setElementData(plr, "Occupation2", getElementData(plr, "Occupation"))
 	end
-	
+
 	-- Make the blip visible to a specific amount of players
 	for y, spectator in pairs(getElementsByType("player")) do
 		if validateVisiblity(plr, spectator) and not getElementData(plr,"anon") then
 			createBlipAttachedTo(plr, 0, 2, r, g, b, 255, 99, 99999.0, spectator)
+		elseif not getElementData(plr,"anon") then
+			local alpha = 200
+			local plr_team = getPlayerTeam(plr) or ""
+			if getElementData(plr, "Occupation") == "Prisoner" or
+				(plr_team == getTeamFromName("Government") and
+				getElementData(spectator, "Occupation") == "Prisoner") then alpha = 10 end
+			createBlipAttachedTo(plr, 0, 1, 200, 200, 200, alpha, 99, 180, spectator)
 		end
 	end
 	if not isTimer(colorUpdater[plr]) then
@@ -89,16 +106,19 @@ function updatePlayerBlip(plr)
 	end
 end
 
+-- Force blips update when "anon" command is used
+addCommandHandler("anon", updatePlayerBlip)
+
 --[[ Clean up when a player leaves ]]--
 function onPlayerQuit()
 	-- Remove current blips if any
   	cleanPlayerBlips(source)
   	playersTeam[source] = nil
-  	
+
   	-- Kill the update timer
 	if isTimer(colorUpdater[source]) then
 		killTimer(colorUpdater[source])
-	end	
+	end
 end
 
 --[[ Clean up when a player dies ]]--
@@ -113,11 +133,12 @@ function updateBlipColor(plr)
 	-- Check if team exist and has changed
 	if not plr or not isElement(plr) or getElementType(plr) ~= "player" then return end
 	if not getPlayerTeam(plr) then return end
-	if playersTeam[plr] == getTeamName(getPlayerTeam(plr)) then return end
-	
+	if playersTeam[plr] == getTeamName(getPlayerTeam(plr)) and
+		getElementData(plr, "Occupation2") == getElementData(plr, "Occupation") then return end
+
 	-- Remove current blips if any
   	playersTeam[plr] = nil
-  	
+
   	-- Remake blips
   	for x, plr2 in pairs(getElementsByType("player")) do
   		updatePlayerBlip(plr2)
@@ -138,6 +159,13 @@ function cleanPlayerBlips(plr)
 		end
 	end
 end
+
+addCommandHandler("gtwinfo", function(plr, cmd)
+	outputChatBox("[GTW-RPG] "..getResourceName(
+	getThisResource())..", by: "..getResourceInfo(
+        getThisResource(), "author")..", v-"..getResourceInfo(
+        getThisResource(), "version")..", is represented", plr)
+end)
 
 --[[ Check if a player has blips attached ]]--
 function hasPlayerBlip(plr)

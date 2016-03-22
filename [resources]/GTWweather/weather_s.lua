@@ -1,40 +1,57 @@
---[[ 
+--[[
 ********************************************************************************
-	Project owner:		GTWGames												
-	Project name: 		GTW-RPG	
-	Developers:   		GTWCode
-	
+	Project owner:		RageQuit community
+	Project name: 		GTW-RPG
+	Developers:   		Mr_Moose
+
 	Source code:		https://github.com/GTWCode/GTW-RPG/
-	Bugtracker: 		http://forum.albonius.com/bug-reports/
-	Suggestions:		http://forum.albonius.com/mta-servers-development/
-	
+	Bugtracker: 		http://forum.404rq.com/bug-reports/
+	Suggestions:		http://forum.404rq.com/mta-servers-development/
+
 	Version:    		Open source
-	License:    		GPL v.3 or later
+	License:    		BSD 2-Clause
 	Status:     		Stable release
 ********************************************************************************
 ]]--
 
 -- Weather id list
-we = { 
-	[1]=4, 
-	[2]=5, 
-	[3]=7, 
-	[4]=8, 
-	[5]=9, 
-	[6]=11, 
-	[7]=12, 
-	[8]=16, 
-	[9]=17, 
-	[10]=18, 
-	[11]=19, 
-	[12]=14 
+we = {
+	[1]=1,
+	[2]=2,
+	[3]=3,
+	[4]=4,
+	[5]=5,
+	[6]=6,
+	[7]=7,
+	[8]=8,
+	[9]=10,
+	[10]=12,
+	[11]=16,
+	[12]=17,
+	[13]=18
 }
 
 -- Update the weather
-function chWeather( ) 
-	local wid = math.random( #we ) 
-	setWeatherBlended( we[wid] ) 
-	outputServerLog("[Weather] Fading to: "..we[wid]) 
+function chWeather( )
+	local wid = math.random(#we)
+	setWeatherBlended(we[wid])
+	setWaveHeight(math.random(10,100)*0.002)
 end
-setTimer( chWeather, math.random(130,180)*60*1000, 0 ) 
-setWeather( we[math.random( #we )] ) 
+setTimer(chWeather, math.random(130,180)*60*1000, 0)
+setWeather(we[math.random( #we )])
+
+-- Remove speed blur level
+for k,v in pairs(getElementsByType("player")) do
+	setPlayerBlurLevel(v, 0)
+end
+function remove_speed_blur(old_acc, acc)
+    	setPlayerBlurLevel(source, 0)
+end
+addEventHandler("onPlayerLogin", root, remove_speed_blur)
+
+addCommandHandler("gtwinfo", function(plr, cmd)
+	outputChatBox("[GTW-RPG] "..getResourceName(
+	getThisResource())..", by: "..getResourceInfo(
+        getThisResource(), "author")..", v-"..getResourceInfo(
+        getThisResource(), "version")..", is represented", plr)
+end)

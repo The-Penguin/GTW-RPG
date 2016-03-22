@@ -1,15 +1,15 @@
---[[ 
+--[[
 ********************************************************************************
-	Project owner:		GTWGames												
-	Project name: 		GTW-RPG	
-	Developers:   		GTWCode
-	
+	Project owner:		RageQuit community
+	Project name: 		GTW-RPG
+	Developers:   		Mr_Moose
+
 	Source code:		https://github.com/GTWCode/GTW-RPG/
-	Bugtracker: 		http://forum.gtw-games.org/bug-reports/
-	Suggestions:		http://forum.gtw-games.org/mta-servers-development/
-	
+	Bugtracker: 		http://forum.404rq.com/bug-reports/
+	Suggestions:		http://forum.404rq.com/mta-servers-development/
+
 	Version:    		Open source
-	License:    		GPL v.3 or later
+	License:    		BSD 2-Clause
 	Status:     		Stable release
 ********************************************************************************
 ]]--
@@ -18,14 +18,10 @@ s_display = { }
 s_text = { }
 
 spawn_loc = {
-	{ 1973.3, -1784.81, 14, 90 },
-	{ 1682.6, -2289.9, 14, 0 },
-	{ 1765.4, -1900.5, 13.6, 270 },
-	{ 1765.4, -1899.5, 13.6, 270 },
-	{ 1765.4, -1898.5, 13.6, 270 },
-	{ 1765.4, -1897.5, 13.6, 270 },
-	{ 1765.4, -1896.5, 13.6, 270 },
-	{ 1765.4, -1895.5, 13.6, 270 },
+	{ 2512, -1670, 14, 90  },
+	{ 1516, -1656, 14, 270 },
+	{ 630, 	-543,  17, 270 },
+	{ -302, 1082,  20, 180 },
 }
 skin_id = {
 	12,13,15,17,20,23,25,26,34,35,36,37,40,41,59,60,98,99,117,118,120
